@@ -41,7 +41,6 @@ module.exports.updateAddresses = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if the ID is a valid UUID format
     if (
       !/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
         id
@@ -50,7 +49,6 @@ module.exports.updateAddresses = async (req, res) => {
       return res.status(400).json({ error: "Invalid UUID format" });
     }
 
-    // Find the address by ID
     let address = await Addresses.findByPk(id);
     if (!address) {
       return res.status(404).json({ error: "Address not found" });
@@ -61,10 +59,8 @@ module.exports.updateAddresses = async (req, res) => {
       where: { id: id },
     });
 
-    // Fetch updated address data
     address = await Addresses.findByPk(id);
 
-    // Send a response with updated data
     res
       .status(200)
       .json({ message: "Address updated successfully", Addresses : address });

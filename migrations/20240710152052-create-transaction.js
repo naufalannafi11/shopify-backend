@@ -18,7 +18,7 @@ module.exports = {
           onUpdate: "CASCADE",
         },
       },
-      TransactionAmount: {
+      transactionAmount: {
         type: Sequelize.INTEGER,
       },
       orderId: {
@@ -30,7 +30,7 @@ module.exports = {
           onUpdate: "CASCADE",
         },
       },
-      
+
       paymentMethod: {
         type: Sequelize.STRING,
       },

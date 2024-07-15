@@ -18,7 +18,6 @@ module.exports.register = async (req, res) => {
   const { fullName, email, password, confirmPassword, birthDate, phoneNumber } =
     req.body;
 
-  // Validasi input
   if (password !== confirmPassword) {
     return res
       .status(400)
@@ -35,7 +34,6 @@ module.exports.register = async (req, res) => {
  
 
   try {
-    // Cek apakah email atau nomor telepon sudah ada di database
     const existingEmail = await Users.findOne({ where: { email } });
     if (existingEmail) {
       return res.status(400).json({ error: "Email already exists" });
@@ -45,10 +43,8 @@ module.exports.register = async (req, res) => {
       return res.status(400).json({ error: "Phone number already exists" });
     }
 
-    // Hash password menggunakan Argon2
     const hashedPassword = await argon2.hash(password);
 
-    // Buat user baru
     const newUser = await Users.create({
       fullName,
       email,
@@ -57,7 +53,6 @@ module.exports.register = async (req, res) => {
       phoneNumber,
     });
 
-    // Generate access token dan refresh token
     const accessToken = generateAccessToken(newUser.id);
     const refreshToken = generateRefreshToken(newUser.id);
 
@@ -80,23 +75,19 @@ module.exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Cari pengguna berdasarkan email
     const user = await Users.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ message: "Users not found" });
     }
 
-    // Verifikasi password
     const isValidPassword = await argon2.verify(user.password, password);
     if (!isValidPassword) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    // Generate access token dan refresh token
     const token = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Mengembalikan respons sukses dengan token dan refresh token
     res.status(200).json({ message: "Logged in", token, refreshToken });
   } catch (error) {
     console.error("Error logging in users:", error);
@@ -144,10 +135,8 @@ module.exports.refreshToken = async (req, res) => {
   }
 
   try {
-    // Verifikasi refresh token
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
-    // Generate access token baru
     const accessToken = generateAccessToken(decoded.id);
 
     res.status(200).json({ accessToken });

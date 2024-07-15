@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       });
 
-      Orders.hasMany(models.Transaction, {
+      Orders.hasMany(models.Transactions, {
         foreignKey: "orderId",
         as: "transactions",
         onDelete: "CASCADE",
